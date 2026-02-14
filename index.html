@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ISAEVA - Secure Auth</title>
+    <title>BENG - SCRIPT - SYSTEM</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -11,15 +11,20 @@
             --input-bg: #161616;
             --input-border: #262626;
             --brand-color: #7a2b2f; 
-            --error-red: #ff3b30;   
             --success-green: #34c759;
             --glass-btn: rgba(255, 255, 255, 0.04);
             --glass-border: rgba(255, 255, 255, 0.1);
             --link-gray: #888888;   
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        /* 动画 */
+        @keyframes revealDown {
+            0% { opacity: 0; transform: translateY(-20px); filter: blur(5px); }
+            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
         body {
             background-color: var(--bg-dark);
             height: 100vh;
@@ -29,43 +34,29 @@
         }
 
         .container { width: 100%; max-width: 400px; padding: 20px; text-align: center; }
-        .header { margin-bottom: 30px; }
-        .logo-wrap { display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
-        .logo-bird { color: var(--brand-color); font-size: 40px; margin-right: 12px; }
-        .logo-text { font-size: 38px; font-weight: 800; letter-spacing: 1px; color: white; }
-        .subtitle { color: #666; font-size: 14px; }
+        .reveal { animation: revealDown 0.8s forwards; }
 
-        .form-stage { position: relative; min-height: 450px; }
+        .header { margin-bottom: 30px; }
+        .logo-text { font-size: 36px; font-weight: 800; letter-spacing: 1px; }
+        .subtitle { color: #666; font-size: 14px; margin-top: 5px; }
+
+        .form-stage { position: relative; min-height: 300px; }
         .form-content {
             position: absolute; width: 100%; top: 0; left: 0;
-            opacity: 0; visibility: hidden; transform: translateY(15px);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            display: none; flex-direction: column;
         }
-        .form-content.active { opacity: 1; visibility: visible; transform: translateY(0); }
+        .form-content.active { display: flex; animation: revealDown 0.5s forwards; }
 
-        .input-wrapper { margin-bottom: 18px; text-align: left; }
-        .input-field { position: relative; display: flex; gap: 10px; }
-        .input-field i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #444; font-size: 17px; }
+        .input-wrapper { margin-bottom: 15px; }
+        .input-field { position: relative; }
+        .input-field i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #444; }
         
         input {
-            flex: 1; background: var(--input-bg); border: 1px solid var(--input-border); 
+            width: 100%; background: var(--input-bg); border: 1px solid var(--input-border); 
             border-radius: 12px; padding: 16px 16px 16px 50px;
             color: white; font-size: 14px; outline: none; transition: 0.3s;
         }
-        input:focus { border-color: #555; background: #1c1c1c; }
-
-        /* 验证码按钮样式 */
-        .btn-code {
-            padding: 0 15px; background: var(--glass-btn); border: 1px solid var(--glass-border);
-            border-radius: 12px; color: #ccc; font-size: 12px; cursor: pointer; white-space: nowrap;
-        }
-        .btn-code:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .error-msg {
-            color: var(--error-red); font-size: 12px; margin-top: 5px; margin-left: 4px;
-            display: none;
-        }
-        .error-msg.show { display: block; }
+        input:focus { border-color: var(--brand-color); }
 
         .btn-glass {
             width: 100%; padding: 16px; margin-top: 10px;
@@ -73,207 +64,136 @@
             border: 1px solid var(--glass-border); border-radius: 12px;
             color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s;
         }
-        .btn-glass:hover { background: rgba(255, 255, 255, 0.1); }
+        .btn-glass:hover { background: rgba(255, 255, 255, 0.1); border-color: #444; }
 
         .footer-nav { margin-top: 25px; font-size: 13px; color: #555; }
-        .footer-link { color: var(--link-gray); cursor: pointer; margin-left: 5px; }
+        .footer-link { color: var(--link-gray); cursor: pointer; text-decoration: underline; margin-left: 5px; }
         
-        /* 登录成功状态 */
-        #success-state { display: none; flex-direction: column; align-items: center; }
+        #success-state { flex-direction: column; align-items: center; }
         .success-icon { color: var(--success-green); font-size: 60px; margin-bottom: 20px; }
+
+        .loading-spinner { display: none; margin-top: 10px; font-size: 12px; color: #888; }
     </style>
 </head>
 <body>
 
-    <div class="container" id="main-container">
+    <div class="container reveal">
         <div class="header">
-            <div class="logo-wrap">
-                <i class="fa-solid fa-dove logo-bird"></i>
-                <span class="logo-text">ISAEVA</span>
-            </div>
-            <p id="form-subtitle" class="subtitle">Secure Glass Identity</p>
+            <div class="logo-text">BENG - SCRIPT</div>
+            <p id="form-subtitle" class="subtitle">Secure Identity Management</p>
         </div>
 
         <div class="form-stage">
-            <!-- 登录表单 -->
+            <!-- 登录界面 -->
             <div id="login-form" class="form-content active">
                 <div class="input-wrapper">
-                    <div class="input-field">
-                        <i class="fa-regular fa-user"></i>
-                        <input type="text" id="login-user" placeholder="Username or Email">
-                    </div>
+                    <div class="input-field"><i class="fa-regular fa-user"></i><input type="text" id="login-user" placeholder="Username"></div>
                 </div>
                 <div class="input-wrapper">
-                    <div class="input-field">
-                        <i class="fa-solid fa-lock"></i>
-                        <input type="password" id="login-pass" placeholder="Password">
-                    </div>
+                    <div class="input-field"><i class="fa-solid fa-lock"></i><input type="password" id="login-pass" placeholder="Password"></div>
                 </div>
-                <button class="btn-glass" onclick="handleLogin()">Sign In</button>
+                <div class="input-wrapper">
+                    <div class="input-field"><i class="fa-solid fa-key"></i><input type="text" id="login-card" placeholder="Discord Key (BENG_KEY...)"></div>
+                </div>
+                <button class="btn-glass" onclick="handleLogin()">Authorize Access</button>
                 <div class="footer-nav">
-                    New here? <span class="footer-link" onclick="switchForm('register')">Create account</span>
+                    Need an account? <span class="footer-link" onclick="switchForm('register')">Register</span>
                 </div>
             </div>
 
-            <!-- 注册表单 -->
+            <!-- 注册界面 -->
             <div id="register-form" class="form-content">
                 <div class="input-wrapper">
-                    <div class="input-field">
-                        <i class="fa-regular fa-user"></i>
-                        <input type="text" id="reg-user" placeholder="Create Username" onblur="checkUserExists()">
-                    </div>
-                    <div class="error-msg" id="reg-user-err">Username already exists</div>
+                    <div class="input-field"><i class="fa-regular fa-user"></i><input type="text" id="reg-user" placeholder="Create Username"></div>
                 </div>
-
                 <div class="input-wrapper">
-                    <div class="input-field">
-                        <i class="fa-regular fa-envelope"></i>
-                        <input type="email" id="reg-email" placeholder="Email address">
-                    </div>
+                    <div class="input-field"><i class="fa-solid fa-lock"></i><input type="password" id="reg-pass" placeholder="Create Password"></div>
                 </div>
-
-                <!-- 验证码部分 -->
-                <div class="input-wrapper">
-                    <div class="input-field">
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <input type="text" id="reg-code" placeholder="Verification Code">
-                        <button class="btn-code" id="send-code-btn" onclick="sendCode()">Send Code</button>
-                    </div>
-                    <div class="error-msg" id="reg-code-err">Invalid code</div>
-                </div>
-
-                <div class="input-wrapper">
-                    <div class="input-field">
-                        <i class="fa-solid fa-lock"></i>
-                        <input type="password" id="reg-pass" placeholder="Set Password">
-                    </div>
-                </div>
-
-                <button class="btn-glass" onclick="handleRegister()">Complete Registration</button>
+                <button class="btn-glass" onclick="handleRegister()">Create Identity</button>
                 <div class="footer-nav">
-                    Already a member? <span class="footer-link" onclick="switchForm('login')">Login here</span>
+                    Member? <span class="footer-link" onclick="switchForm('login')">Go to Login</span>
                 </div>
             </div>
 
-            <!-- 注册成功状态 -->
+            <!-- 成功界面 -->
             <div id="success-state" class="form-content">
                 <i class="fa-solid fa-circle-check success-icon"></i>
-                <h2>Welcome, <span id="welcome-name"></span></h2>
-                <p class="subtitle" style="margin-top:10px">Your account is active.</p>
-                <button class="btn-glass" style="margin-top:30px" onclick="location.reload()">Log Out</button>
+                <h2 id="welcome-msg">Access Granted</h2>
+                <p class="subtitle" style="margin-top:10px">Redirecting to system...</p>
+                <button class="btn-glass" style="margin-top:30px" onclick="location.reload()">Terminal Logout</button>
             </div>
         </div>
+        <div id="loader" class="loading-spinner">Processing Request...</div>
     </div>
 
     <script>
-        // 替换为你的 Cloudflare Worker URL
+        // 【重要】替换为你自己的 Worker URL
         const API_URL = "https://beng-key.2176671594.workers.dev";
 
         function switchForm(type) {
-            document.querySelectorAll('.form-content').forEach(f => f.classList.remove('active'));
             const subtitle = document.getElementById('form-subtitle');
-            
+            document.querySelectorAll('.form-content').forEach(f => f.classList.remove('active'));
             if (type === 'register') {
                 document.getElementById('register-form').classList.add('active');
-                subtitle.innerText = 'Join the community';
+                subtitle.innerText = "Join the BENG Network";
             } else {
                 document.getElementById('login-form').classList.add('active');
-                subtitle.innerText = 'Sign in to your account';
+                subtitle.innerText = "Secure Access Protocol";
             }
         }
 
-        // 1. 检查用户名是否存在
-        async function checkUserExists() {
-            const username = document.getElementById('reg-user').value;
-            if (!username) return;
-
-            try {
-                const res = await fetch(`${API_URL}/check-user?username=${username}`);
-                const data = await res.json();
-                const errEl = document.getElementById('reg-user-err');
-                if (data.exists) {
-                    errEl.innerText = "Username already taken";
-                    errEl.classList.add('show');
-                } else {
-                    errEl.classList.remove('show');
-                }
-            } catch (e) { console.error("API Error", e); }
-        }
-
-        // 2. 发送邮箱验证码
-        async function sendCode() {
-            const email = document.getElementById('reg-email').value;
-            if (!email.includes('@')) {
-                alert("Please enter a valid email");
-                return;
-            }
-
-            const btn = document.getElementById('send-code-btn');
-            btn.disabled = true;
-            btn.innerText = "Sending...";
-
-            try {
-                const res = await fetch(`${API_URL}/send-code`, {
-                    method: 'POST',
-                    body: JSON.stringify({ email })
-                });
-                
-                if (res.ok) {
-                    let countdown = 60;
-                    const timer = setInterval(() => {
-                        btn.innerText = `${countdown}s`;
-                        if (countdown-- <= 0) {
-                            clearInterval(timer);
-                            btn.disabled = false;
-                            btn.innerText = "Resend Code";
-                        }
-                    }, 1000);
-                }
-            } catch (e) {
-                btn.disabled = false;
-                btn.innerText = "Send Code";
-                alert("Failed to send code");
-            }
-        }
-
-        // 3. 提交注册
         async function handleRegister() {
-            const user = document.getElementById('reg-user').value;
-            const email = document.getElementById('reg-email').value;
-            const code = document.getElementById('reg-code').value;
-            const pass = document.getElementById('reg-pass').value;
+            const user = document.getElementById('reg-user').value.trim();
+            const pass = document.getElementById('reg-pass').value.trim();
+            if (!user || !pass) return alert("Fill all fields");
 
-            if (!user || !email || !code || !pass) {
-                alert("Please fill all fields");
-                return;
-            }
-
+            toggleLoader(true);
             try {
                 const res = await fetch(`${API_URL}/register`, {
                     method: 'POST',
-                    body: JSON.stringify({ user, email, code, pass })
+                    body: JSON.stringify({ user, pass })
                 });
                 const data = await res.json();
+                if (data.success) {
+                    alert("Account Created! Please Login.");
+                    switchForm('login');
+                } else {
+                    alert(data.message);
+                }
+            } catch (e) { alert("Server error"); }
+            toggleLoader(false);
+        }
 
+        async function handleLogin() {
+            const user = document.getElementById('login-user').value.trim();
+            const pass = document.getElementById('login-pass').value.trim();
+            const card = document.getElementById('login-card').value.trim();
+            if (!user || !pass || !card) return alert("All fields required");
+
+            toggleLoader(true);
+            try {
+                const res = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    body: JSON.stringify({ user, pass, card })
+                });
+                const data = await res.json();
                 if (data.success) {
                     showSuccess(user);
                 } else {
-                    alert(data.message || "Registration failed");
+                    alert(data.message);
                 }
             } catch (e) { alert("Server error"); }
+            toggleLoader(false);
+        }
+
+        function toggleLoader(show) {
+            document.getElementById('loader').style.display = show ? 'block' : 'none';
         }
 
         function showSuccess(name) {
             document.querySelectorAll('.form-content').forEach(f => f.classList.remove('active'));
-            document.getElementById('success-state').style.display = 'flex';
             document.getElementById('success-state').classList.add('active');
-            document.getElementById('welcome-name').innerText = name;
-        }
-
-        async function handleLogin() {
-            // 这里简单模拟登录逻辑
-            const user = document.getElementById('login-user').value;
-            if (user) showSuccess(user);
+            document.getElementById('welcome-msg').innerText = "Welcome, " + name;
         }
     </script>
 </body>
